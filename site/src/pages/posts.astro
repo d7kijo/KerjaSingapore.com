@@ -4,31 +4,29 @@ import { GraphQLClient } from 'graphql-request';
 // Setup GraphQL client untuk connect dengan WordPress
 const graphQLClient = new GraphQLClient('https://kerjasingapore.com/graphql');
 
-export async function getStaticProps() {
-  const query = `
-    query {
-      posts {
-        nodes {
-          title
-          slug
-          content
-        }
+const query = `
+  query {
+    posts {
+      nodes {
+        title
+        slug
+        content
       }
     }
-  `;
-  const data = await graphQLClient.request(query);
-  return { props: { posts: data.posts.nodes } };
-}
+  }
+`;
+const data = await graphQLClient.request(query);
+const posts = data?.posts?.nodes ?? [];
 ---
 
 <html>
   <body>
     <h1>Posts List</h1>
     <ul>
-      {Astro.props.posts.map((post) => (
-        <li key={post.slug}>
+      {posts.map((post) => (
+        <li>
           <h2>{post.title}</h2>
-          <p>{post.content}</p>
+          <div set:html={post.content}></div>
         </li>
       ))}
     </ul>

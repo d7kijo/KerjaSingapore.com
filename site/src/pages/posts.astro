@@ -15,7 +15,13 @@ const query = `
     }
   }
 `;
-const data = await graphQLClient.request(query);
+let data;
+try {
+  data = await graphQLClient.request(query);
+} catch (err) {
+  console.error('GraphQL fetch failed during build:', err?.message ?? err);
+  data = { posts: { nodes: [] } };
+}
 const posts = data?.posts?.nodes ?? [];
 ---
 
